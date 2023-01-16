@@ -17,11 +17,19 @@
        --teams tbl -- I need columns 'name'(full team name), 'G'(games played)
 --Part A
 SELECT
-namegiven as full_name,
-MIN(height) as shortest_height
+p.namegiven AS full_name,
+t.name AS team_name,
+--a.teamid,
+a.g_all AS total_games,
+MIN(p.height) AS shortest_height
 
-FROM people
+FROM people p
+LEFT JOIN appearances a 
+ON p.playerid = a.playerid
+LEFT JOIN teams t
+ON a.teamid = t.teamid
 
-GROUP BY 1
+GROUP BY 1,2,3
 ORDER BY shortest_height asc
---Edward Carl at 43 inches
+LIMIT 10
+--Edward Carl at 43 inches played 1 game.
