@@ -74,32 +74,52 @@
 
 --C. Lets put it all together
 
-SELECT DISTINCT
-p.namefirst AS first_name,
-p.namelast AS last_name,
-b.total_sal
+-- SELECT DISTINCT
+-- p.namefirst AS first_name,
+-- p.namelast AS last_name,
+-- b.total_sal
 
-FROM people p
-LEFT JOIN collegeplaying cp
-ON p.playerid = cp.playerid
+-- FROM people p
+-- LEFT JOIN collegeplaying cp
+-- ON p.playerid = cp.playerid
 
-INNER JOIN --changed from LEFT JOIN to INNER becuase the total_sal column was null. When changed to INNER I got my results
-(
-SELECT 
-s.playerid,
-MONEY(CAST(SUM(s.salary)AS Numeric)) AS total_sal
+-- INNER JOIN --changed from LEFT JOIN to INNER becuase the total_sal column was null. When changed to INNER I got my results
+-- (
+-- SELECT 
+-- s.playerid,
+-- MONEY(CAST(SUM(s.salary)AS Numeric)) AS total_sal
 
-FROM salaries s
-LEFT JOIN collegeplaying cp
-ON s.playerid = cp.playerid
+-- FROM salaries s
+-- LEFT JOIN collegeplaying cp
+-- ON s.playerid = cp.playerid
 
-WHERE 
-cp.schoolid = 'vandy'
-GROUP BY 1    
-) b
-ON p.playerid = b.playerid
+-- WHERE 
+-- cp.schoolid = 'vandy'
+-- GROUP BY 1    
+-- ) b
+-- ON p.playerid = b.playerid
 
-ORDER BY b.total_sal DESC
+-- ORDER BY b.total_sal DESC
 --15 players from Vanderbilt 
 
+-- 4. Using the fielding table, group players into three groups based on their position: label players with position OF as "Outfield", 
+-- those with position "SS", "1B", "2B", and "3B" as "Infield", 
+-- and those with position "P" or "C" as "Battery". Determine the number of putouts made by each of these three groups in 2016.
 
+SELECT 
+CASE WHEN pos = 'OF' THEN 'Outfield'
+        
+    WHEN pos = 'SS' OR
+         pos = '1B' OR
+         pos = '2B' OR
+         pos = '3B' THEN 'Infield'
+   
+ WHEN pos = 'P' OR 
+      pos = 'C' THEN 'Battery'
+ END AS Position,
+     
+SUM (po)
+      
+FROM fielding  
+WHERE yearid = '2016'
+Group BY position
