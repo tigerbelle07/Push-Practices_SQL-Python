@@ -106,20 +106,48 @@
 -- those with position "SS", "1B", "2B", and "3B" as "Infield", 
 -- and those with position "P" or "C" as "Battery". Determine the number of putouts made by each of these three groups in 2016.
 
-SELECT 
-CASE WHEN pos = 'OF' THEN 'Outfield'
+-- SELECT 
+-- CASE WHEN pos = 'OF' THEN 'Outfield'
         
-    WHEN pos = 'SS' OR
-         pos = '1B' OR
-         pos = '2B' OR
-         pos = '3B' THEN 'Infield'
+--     WHEN pos = 'SS' OR
+--          pos = '1B' OR
+--          pos = '2B' OR
+--          pos = '3B' THEN 'Infield'
    
- WHEN pos = 'P' OR 
-      pos = 'C' THEN 'Battery'
- END AS Position,
+--  WHEN pos = 'P' OR 
+--       pos = 'C' THEN 'Battery'
+--  END AS Position,
      
-SUM (po)
+-- SUM (po)
       
-FROM fielding  
-WHERE yearid = '2016'
-Group BY position
+-- FROM fielding  
+-- WHERE yearid = '2016'
+-- Group BY position
+
+-- 5.Find the average number of strikeouts per game by decade since 1920. 
+-- Round the numbers you report to 2 decimal places. Do the same for home runs per game. Do you see any trends?
+--Note: Need Batting Tbl, maybe Pitching tbl or BattingPost Tbl
+--homegames tbl to filter games after 1920
+--A.First use a CASE WHEN Statment to categorized the years into decades --use Teams tbl
+--B. Next do the calculations - SO/games played gives you avg strikeouts per game. Do the same for homeruns
+SELECT 
+
+CASE WHEN yearID BETWEEN 1920 AND 1929 THEN '1920s'
+     WHEN yearID BETWEEN 1930 AND 1939 THEN '1930s'
+     WHEN yearID BETWEEN 1940 AND 1949 THEN '1940s'
+     WHEN yearID BETWEEN 1950 AND 1959 THEN '1950s'
+     WHEN yearID BETWEEN 1960 AND 1969 THEN '1960s'
+     WHEN yearID BETWEEN 1970 AND 1979 THEN '1970s'
+     WHEN yearID BETWEEN 1980 AND 1989 THEN '1980s'
+     WHEN yearID BETWEEN 1990 AND 1999 THEN '1990s'
+     WHEN yearID BETWEEN 2000 AND 2009 THEN '2000s'
+     WHEN yearID BETWEEN 2010 AND 2020 THEN '2010s'
+     END AS decade,
+     
+ROUND(CAST(SUM(SO) AS numeric)/CAST(SUM(g/2) AS numeric), 2) AS avg_so_per_game,
+ROUND(CAST(SUM(HR) AS numeric)/CAST(SUM(g/2) AS numeric), 2) AS avg_hr_per_game
+
+FROM teams
+GROUP BY 1
+ORDER BY decade 
+     
