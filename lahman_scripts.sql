@@ -130,24 +130,46 @@
 --homegames tbl to filter games after 1920
 --A.First use a CASE WHEN Statment to categorized the years into decades --use Teams tbl
 --B. Next do the calculations - SO/games played gives you avg strikeouts per game. Do the same for homeruns
+-- SELECT 
+
+-- CASE WHEN yearID BETWEEN 1920 AND 1929 THEN '1920s'
+--      WHEN yearID BETWEEN 1930 AND 1939 THEN '1930s'
+--      WHEN yearID BETWEEN 1940 AND 1949 THEN '1940s'
+--      WHEN yearID BETWEEN 1950 AND 1959 THEN '1950s'
+--      WHEN yearID BETWEEN 1960 AND 1969 THEN '1960s'
+--      WHEN yearID BETWEEN 1970 AND 1979 THEN '1970s'
+--      WHEN yearID BETWEEN 1980 AND 1989 THEN '1980s'
+--      WHEN yearID BETWEEN 1990 AND 1999 THEN '1990s'
+--      WHEN yearID BETWEEN 2000 AND 2009 THEN '2000s'
+--      WHEN yearID BETWEEN 2010 AND 2020 THEN '2010s'
+--      END AS decade,
+     
+-- ROUND(CAST(SUM(SO) AS numeric)/CAST(SUM(g/2) AS numeric), 2) AS avg_so_per_game,
+-- ROUND(CAST(SUM(HR) AS numeric)/CAST(SUM(g/2) AS numeric), 2) AS avg_hr_per_game
+
+-- FROM teams
+-- GROUP BY 1
+-- ORDER BY decade 
+     
+-- 6. Find the player who had the most success stealing bases in 2016, where success is measured as the percentage of stolen base attempts which are successful. 
+-- (A stolen base attempt results either in a stolen base or being caught stealing.) 
+-- Consider only players who attempted at least 20 stolen bases.  
+--note: adding CAST and Numeric helps with the calculations w/in SQL.
 SELECT 
+p.namegiven,
+ROUND(CAST(SUM(b.sb) AS numeric)/CAST(SUM(b.sb) + SUM(b.cs) AS numeric), 3) AS pct_sb,
+SUM(b.sb) AS steal_bases,
+SUM(b.cs) AS caught_stealing
+--ROUND(CAST(SUM(b.sb) AS numeric)/CAST((SUM(b.sb) + SUM(b.cs)) AS numeric),3) AS pct_sb
 
-CASE WHEN yearID BETWEEN 1920 AND 1929 THEN '1920s'
-     WHEN yearID BETWEEN 1930 AND 1939 THEN '1930s'
-     WHEN yearID BETWEEN 1940 AND 1949 THEN '1940s'
-     WHEN yearID BETWEEN 1950 AND 1959 THEN '1950s'
-     WHEN yearID BETWEEN 1960 AND 1969 THEN '1960s'
-     WHEN yearID BETWEEN 1970 AND 1979 THEN '1970s'
-     WHEN yearID BETWEEN 1980 AND 1989 THEN '1980s'
-     WHEN yearID BETWEEN 1990 AND 1999 THEN '1990s'
-     WHEN yearID BETWEEN 2000 AND 2009 THEN '2000s'
-     WHEN yearID BETWEEN 2010 AND 2020 THEN '2010s'
-     END AS decade,
-     
-ROUND(CAST(SUM(SO) AS numeric)/CAST(SUM(g/2) AS numeric), 2) AS avg_so_per_game,
-ROUND(CAST(SUM(HR) AS numeric)/CAST(SUM(g/2) AS numeric), 2) AS avg_hr_per_game
+FROM batting b
+LEFT JOIN people p
+on b.playerid = p.playerid
 
-FROM teams
+WHERE 
+b.yearid = 2016
+AND 
+CAST(b.sb + b.cs as FLOAT) >= 20
+
 GROUP BY 1
-ORDER BY decade 
-     
+ORDER BY pct_sb DESC
